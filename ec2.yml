@@ -1,0 +1,47 @@
+# Basic provisioning example
+- name: Ansible test
+  hosts: localhost
+  gather_facts: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: create a security group
+      ec2_group:
+        name: ansible-sg
+        description: an example ec2 group
+        region: ap-south-1
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+      register: security_group
+
+    - name: launching AWS instance using Ansible
+      ec2_instance:
+        key_name: ansible
+        instance_type: t2.micro
+        image_id: ami-068257025f72f470d
+        region: ap-south-1
+        wait: yes
+        count: 1
+        vpc_subnet_id: 	subnet-03f594c20ad5fa9e0
+        security_group: "{{ security_group.group_id }}"
+        tags:
+          Name: ec2-ansible
+        network:
+          assign_public_ip: true
+          delete_on_termination: yes
+        volumes:
+          - device_name: /dev/sda1
+            ebs:
+              volume_size: 10
+              delete_on_termination: true
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
