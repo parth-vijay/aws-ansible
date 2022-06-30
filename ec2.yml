@@ -31,7 +31,7 @@
         region: ap-south-1
         wait: yes
         count: 1
-        vpc_subnet_id: 	subnet-03f594c20ad5fa9e0
+        vpc_subnet_id: subnet-03f594c20ad5fa9e0
         security_group: "{{ security_group.group_id }}"
         tags:
           Name: ec2-ansible
