@@ -1,0 +1,32 @@
+- name: Ansible test
+  hosts: localhost
+  gather_facts: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: create VPC
+      ec2_vpc_net:
+        name: "test-vpc"
+        cidr_block: "10.1.0.0/16"
+        region: "ap-south-1"
+        state: present
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+      register: vpc
+
+    - name: VPC info
+      debug:
+        msg: "{{ vpc }}"
+
+    - name: associate subnet to the VPC
+        ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc.id }}"
+        region: ap.south.1
+        cidr: "10.1.1.0/24"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        map_public: yes
+        resource_tags:
+          Name: "test-subnet"
+      register: subnet

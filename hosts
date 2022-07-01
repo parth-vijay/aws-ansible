@@ -1,2 +1,2 @@
 [aws]
-localhost
+localhost ansible_connection=local ansible_python_interpreter="/var/www/virtual/ansible-env/bin/python3"
